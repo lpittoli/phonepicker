@@ -8,7 +8,31 @@ import { Smartphone, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-const phones = [
+interface PhoneSpecs {
+  processor: string;
+  ram: string;
+  storage: string[];
+  display: string;
+  camera: string;
+  battery: string;
+}
+
+interface PurchaseLinks {
+  amazon: string;
+  official: string;
+}
+
+interface Phone {
+  id: number;
+  brand: string;
+  model: string;
+  price: number;
+  image: string;
+  specs: PhoneSpecs;
+  purchaseLinks: PurchaseLinks;
+}
+
+const phones: Phone[] = [
   {
     id: 1,
     brand: "Apple",
@@ -47,13 +71,20 @@ const phones = [
   }
 ];
 
-type FilterState = {
+interface FilterState {
   brand: string;
   processor: string;
   ram: string;
   storage: string;
   priceRange: number[];
   search: string;
+}
+
+interface FilterSelectProps {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
 }
 
 export default function Home() {
@@ -67,10 +98,10 @@ export default function Home() {
   });
 
   const options = {
-    brands: [...new Set(phones.map(p => p.brand))],
-    processors: [...new Set(phones.map(p => p.specs.processor))],
-    rams: [...new Set(phones.map(p => p.specs.ram))],
-    storages: [...new Set(phones.flatMap(p => p.specs.storage))]
+    brands: Array.from(new Set(phones.map(p => p.brand))),
+    processors: Array.from(new Set(phones.map(p => p.specs.processor))),
+    rams: Array.from(new Set(phones.map(p => p.specs.ram))),
+    storages: Array.from(new Set(phones.flatMap(p => p.specs.storage)))
   };
 
   const filteredPhones = phones.filter(phone => 
@@ -83,7 +114,7 @@ export default function Home() {
      phone.brand.toLowerCase().includes(filters.search.toLowerCase()))
   );
 
-  const FilterSelect = ({ label, value, options, onChange }: any) => (
+  const FilterSelect = ({ label, value, options, onChange }: FilterSelectProps) => (
     <div>
       <label className="text-sm font-medium mb-1 block">{label}</label>
       <Select value={value} onValueChange={onChange}>
@@ -100,7 +131,7 @@ export default function Home() {
     </div>
   );
 
-  const PhoneCard = ({ phone }: any) => (
+  const PhoneCard = ({ phone }: { phone: Phone }) => (
     <Dialog>
       <DialogTrigger asChild>
         <div className="bg-card rounded-lg overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
@@ -121,13 +152,13 @@ export default function Home() {
           <div className="grid gap-2">
             <h3 className="font-semibold">Especificações:</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              {Object.entries(phone.specs).map(([key, value]) => (
+              {(Object.entries(phone.specs) as [keyof PhoneSpecs, string | string[]][]).map(([key, value]) => (
                 <div key={key}>{key}: <span className="font-medium">{Array.isArray(value) ? value.join(", ") : value}</span></div>
               ))}
             </div>
           </div>
           <div className="flex gap-2 mt-4">
-            {Object.entries(phone.purchaseLinks).map(([store, url]) => (
+            {(Object.entries(phone.purchaseLinks) as [keyof PurchaseLinks, string][]).map(([store, url]) => (
               <Button key={store} asChild className="flex-1" variant={store === "amazon" ? "default" : "outline"}>
                 <a href={url} target="_blank" rel="noopener noreferrer">
                   {store === "amazon" ? "Comprar na Amazon" : "Loja Oficial"} <ExternalLink className="ml-2 h-4 w-4" />
