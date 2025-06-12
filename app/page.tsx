@@ -36,7 +36,7 @@ const phones: Phone[] = [
   {
     id: 1,
     brand: "Apple",
-    model: "iPhone 15 Pro",
+    model: "iPhone 98 Pro",
     price: 999,
     image: "https://files.tecnoblog.net/wp-content/uploads/2025/01/iphone-15-pro-max-tecnoblog-titanio-azul.png",
     specs: { processor: "A17 Pro", ram: "8GB", storage: ["128GB", "256GB", "512GB", "1TB"], display: "6.1 OLED", camera: "48MP Main", battery: "3274mAh" },
